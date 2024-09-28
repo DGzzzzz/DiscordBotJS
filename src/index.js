@@ -21,7 +21,7 @@ client.on('guildMemberAdd', (member) =>
 {
     console.log('🎉 Novo membro entrou:', member.user.tag);
 
-    const welcomeChannelId = '1289376007895388263';
+    const welcomeChannelId = process.env.WELCOME_CHANNEL_ID;
     const channel = member.guild.channels.cache.get(welcomeChannelId);
 
     if (!channel)
