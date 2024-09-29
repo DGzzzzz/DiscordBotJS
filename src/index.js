@@ -47,11 +47,35 @@ client.on('messageCreate', (message) =>
 {
     if (message.author.bot) return;
 
-    if (message.content === 'ping')
+    if (message.content === 'oi atrasado')
     {
-        message.channel.send('pong');
+        const welcomeChannelId = process.env.WELCOME_CHANNEL_ID;
+        const channel = message.guild.channels.cache.get(welcomeChannelId);
+
+        if (!channel)
+        {
+            console.log('⚠️ Canal de boas-vindas não encontrado.');
+            return;
+        }
+
+        channel.send(`👋 Olá, ${message.author}! Bem-vindo(a) ao servidor **${message.guild.name}**! 🎉`);
     }
 });
 
+// Evento de desconexão
+client.on('shardDisconnect', (event, id) =>
+{
+    console.log(`❌ Bot desconectado! Código: ${event.code}, Motivo: ${event.reason}`);
+})
+
+// Evento de erro
+client.on('error', (error) =>
+{
+    console.log(`❌ Erro encontrado: ${error.message}`);
+})
+
 // Logando o bot
-client.login(process.env.BOT_TOKEN);
+client.login(process.env.BOT_TOKEN).catch(err =>
+{
+    console.error('❌ Erro ao logar o bot:', err);
+})
