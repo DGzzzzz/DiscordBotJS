@@ -23,6 +23,7 @@ const client = new Client({
 client.once('ready', () =>
 {
     console.log(`🥷✅ Bot online! Logado com ${client.user.tag}`);
+    startPeriodicCheck();
 });
 
 // Evento de boas-vindas para novos membros
@@ -46,6 +47,11 @@ client.on('guildMemberAdd', (member) =>
 client.on('messageCreate', (message) =>
 {
     if (message.author.bot) return;
+
+    // if (message.content === 'oi')
+    // {
+    //     message.reply('Olá! Como você está?');
+    // }
 
     if (message.content === 'oi atrasado')
     {
@@ -73,6 +79,21 @@ client.on('error', (error) =>
 {
     console.log(`❌ Erro encontrado: ${error.message}`);
 })
+
+function startPeriodicCheck()
+{
+    setInterval(() =>
+    {
+        if (!client.isReady())
+        {
+            console.log('⚠️ Bot está offline. Tentando reconectar...');
+            client.login(process.env.BOT_TOKEN).catch(err =>
+            {
+                console.error('❌ Erro ao tentar reconectar o bot:', err);
+            });
+        }
+    }, 60000); // Verificar a cada 60 segundos
+}
 
 // Logando o bot
 client.login(process.env.BOT_TOKEN).catch(err =>
