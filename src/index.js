@@ -25,6 +25,12 @@ const client = new Client({
 // Evento de login
 client.once('ready', () => {
     console.log(`🥷✅ Bot online! Logado com ${client.user.tag}`);
+
+    ping(client, {
+        guild: client.guilds.cache.first(),
+        author: client.user,
+    });
+
     startPeriodicCheck();
 });
 
@@ -85,6 +91,38 @@ client.on('shardDisconnect', (event, id) => {
 client.on('error', error => {
     console.log(`❌ Erro encontrado: ${error.message}`);
 });
+
+let intervalId;
+
+function ping(client, message) {
+    const pingChannelId = process.env.PING_CHANNEL_ID;
+    const channel = message.guild.channels.cache.get(pingChannelId);
+
+    if (!channel) {
+        console.log(`❌ Canal não encontrado`);
+        return;
+    }
+
+    if (intervalId) {
+        console.log(`⚠️ Intervalo já está em execução.`);
+        return;
+    }
+
+    intervalId = setInterval(() => {
+        if (client.isReady()) {
+            channel
+                .send(`ping 🕹️`)
+                .then(() => {
+                    console.log('✅ Mensagem enviada com sucesso.');
+                })
+                .catch(console.error);
+        } else {
+            console.log(`❌ Bot está offline`);
+            clearInterval(intervalId);
+            intervalId = null;
+        }
+    }, 300000);
+}
 
 function startPeriodicCheck() {
     setInterval(() => {
